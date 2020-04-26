@@ -1,0 +1,109 @@
+# The type of case the movie item is in
+enum CaseType {
+  Box
+  Digibook
+  Plain
+  Slipcover
+  Steelbook
+}
+
+# The javascript `Date` as string. Type represents date and time as the ISO Date string.
+scalar DateTime
+
+# The digital movie format included, if any
+enum DigitalType {
+  DC
+  DCUV
+  None
+  UV
+}
+
+# The format of the movie item
+enum FormatType {
+  BluRay
+  DVD
+  Digital
+  UV
+  UltraHD
+}
+
+type Movie {
+  movieID: ID!
+  itemID: Int
+  movieTitle: String
+  movieURL: String
+}
+
+type MovieItem {
+  itemID: ID!
+  ordered: Int
+  itemName: String!
+  caseType: CaseType!
+  digitalType: DigitalType!
+  is3D: YesNo!
+  isWatched: YesNo!
+  formatType: FormatType!
+  itemStatus: StatusType!
+  releaseDate: DateTime
+  itemURL: String!
+  itemNotes: String
+}
+
+type Mutation {
+  addMovieItem(
+    itemName: String!
+    caseType: CaseType
+    digitalType: DigitalType
+    is3D: YesNo
+    isWatched: YesNo
+    formatType: FormatType
+    itemStatus: StatusType
+    releaseDate: String!
+    itemURL: String!
+    itemNotes: String
+  ): MovieItem!
+  markMovieWatched(isWatched: String!, id: Float!): MovieItem!
+  updateMovieItem(
+    orderToWatch: Float
+    itemName: String
+    caseType: CaseType
+    digitalType: DigitalType
+    is3D: YesNo
+    isWatched: YesNo
+    formatType: FormatType
+    itemStatus: StatusType
+    releaseDate: String
+    itemURL: String
+    itemNotes: String
+    id: Float!
+  ): MovieItem!
+  addMovie(itemID: Float!, movieTitle: String!, movieURL: String!): Movie!
+  updateMovie(
+    itemID: Float
+    movieTitle: String
+    movieURL: String
+    id: Float!
+  ): Movie!
+}
+
+type Query {
+  countMovieItems: Float!
+  movieItem(itemID: Float!): MovieItem!
+  movies(itemID: Float!): [Movie!]!
+  countMovies: Int!
+}
+
+# The current status of the movie item
+enum StatusType {
+  Owned
+  Selling
+  Waiting
+  Wanted
+}
+
+# Yes or No flag
+enum YesNo {
+  N
+  Y
+}
+
