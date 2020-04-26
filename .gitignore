@@ -20,6 +20,7 @@ yarn-error.log*
 .idea/
 .vscode/
 node_modules/
+.build/
 build/
 tmp/
 temp/
