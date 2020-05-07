@@ -1,4 +1,4 @@
-import { ObjectType, Field, ID, Int } from 'type-graphql';
+import { ObjectType, Field, Int } from 'type-graphql';
 import {
 	BaseEntity,
 	BeforeInsert,
@@ -11,6 +11,7 @@ import {
 } from 'typeorm';
 
 import CaseType from './CaseType';
+import DateTypeScalar from './DateType';
 import DigitalType from './DigitalType';
 import FormatType from './FormatType';
 import { Movie } from './Movie';
@@ -30,7 +31,7 @@ import YesNo from './YesNo';
 @Entity('movitems', { schema: 'media_tracker' })
 @ObjectType()
 export class MovieItem extends BaseEntity {
-	@Field(() => ID)
+	@Field(() => Int)
 	@PrimaryGeneratedColumn({ type: 'int', name: 'ITEMID', unsigned: true })
 	public itemID!: number;
 
@@ -79,7 +80,7 @@ export class MovieItem extends BaseEntity {
 	})
 	public itemStatus!: StatusType;
 
-	@Field(() => Date, { nullable: true })
+	@Field(() => DateTypeScalar, { nullable: true })
 	@Column('date', { name: 'ITEMAVAIL', nullable: true })
 	public releaseDate!: Date | null;
 

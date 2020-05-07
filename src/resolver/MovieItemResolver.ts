@@ -3,7 +3,9 @@ import {
 	Arg,
 	Args,
 	ArgsType,
+	Authorized,
 	Field,
+	InputType,
 	Int,
 	Mutation,
 	Query,
@@ -12,37 +14,142 @@ import {
 import { getRepository } from 'typeorm';
 
 import CaseType from '../entity/CaseType';
+import DateTypeScalar from '../entity/DateType';
 import DigitalType from '../entity/DigitalType';
+import FilterType from '../entity/FilterType';
 import FormatType from '../entity/FormatType';
 import { MovieItem } from '../entity/MovieItem';
+import OrderType from '../entity/OrderType';
 import StatusType from '../entity/StatusType';
 import YesNo from '../entity/YesNo';
+import { convertFiltersToWhere } from '../util/sql';
 
-@ArgsType()
-class CountMovieItems implements Partial<MovieItem> {
+export type TFilterType<V = string> =
+	| { relation: Exclude<FilterType, 'between'>; value: V }
+	| { relation: FilterType.between; value: V; value2: V };
+
+type TSortBy = {
+	[f: string]: 'ASC' | 'DESC';
+};
+
+@InputType()
+class StringFilterInput {
+	@Field(() => FilterType)
+	relation!: FilterType;
+
+	@Field()
+	value!: string;
+
 	@Field({ nullable: true })
-	itemName?: string;
+	value2?: string;
+}
+
+@InputType()
+class CaseTypeFilterInput {
+	@Field(() => FilterType)
+	relation!: FilterType;
+
+	@Field(() => CaseType)
+	value!: CaseType;
 
 	@Field(() => CaseType, { nullable: true })
-	caseType?: CaseType;
+	value2?: CaseType;
+}
+
+@InputType()
+class DigitalTypeFilterInput {
+	@Field(() => FilterType)
+	relation!: FilterType;
+
+	@Field(() => DigitalType)
+	value!: DigitalType;
 
 	@Field(() => DigitalType, { nullable: true })
-	digitalType?: DigitalType;
+	value2?: DigitalType;
+}
+
+@InputType()
+class YesNoFilterInput {
+	@Field(() => FilterType)
+	relation!: FilterType;
+
+	@Field(() => YesNo)
+	value!: YesNo;
 
 	@Field(() => YesNo, { nullable: true })
-	is3D?: YesNo;
+	value2?: YesNo;
+}
 
-	@Field(() => YesNo, { nullable: true })
-	isWatched?: YesNo;
+@InputType()
+class FormatTypeFilterInput {
+	@Field(() => FilterType)
+	relation!: FilterType;
+
+	@Field(() => FormatType)
+	value!: FormatType;
 
 	@Field(() => FormatType, { nullable: true })
-	formatType?: FormatType;
+	value2?: FormatType;
+}
+
+@InputType()
+class StatusTypeFilterInput {
+	@Field(() => FilterType)
+	relation!: FilterType;
+
+	@Field(() => StatusType)
+	value!: string;
 
 	@Field(() => StatusType, { nullable: true })
-	itemStatus?: StatusType;
+	value2?: StatusType;
+}
+
+@InputType()
+class DateFilterInput {
+	@Field(() => FilterType)
+	relation!: FilterType;
+
+	@Field(() => Date)
+	value!: Date;
 
 	@Field(() => Date, { nullable: true })
-	releaseDate?: Date;
+	value2?: Date;
+}
+
+@ArgsType()
+export class CountMovieItems {
+	@Field(() => StringFilterInput, { nullable: true })
+	itemName?: TFilterType;
+
+	@Field(() => CaseTypeFilterInput, { nullable: true })
+	caseType?: TFilterType<CaseType>;
+
+	@Field(() => DigitalTypeFilterInput, { nullable: true })
+	digitalType?: TFilterType<DigitalType>;
+
+	@Field(() => YesNoFilterInput, { nullable: true })
+	is3D?: TFilterType<YesNo>;
+
+	@Field(() => YesNoFilterInput, { nullable: true })
+	isWatched?: TFilterType<YesNo>;
+
+	@Field(() => FormatTypeFilterInput, { nullable: true })
+	formatType?: TFilterType<FormatType>;
+
+	@Field(() => StatusTypeFilterInput, { nullable: true })
+	itemStatus?: TFilterType<StatusType>;
+
+	@Field(() => DateFilterInput, { nullable: true })
+	releaseDate?: TFilterType<Date>;
+}
+
+@InputType({ isAbstract: true })
+abstract class OrderBy {
+	@Field(() => String)
+	field!: keyof MovieItem;
+
+	@Field(() => OrderType)
+	direction!: OrderType;
 }
 
 @ArgsType()
@@ -56,8 +163,8 @@ class GetMovieItemsArgs extends CountMovieItems {
 	@Min(0)
 	skip = 0;
 
-	@Field(() => [String, String], { nullable: true })
-	order?: [string, string];
+	@Field(() => [OrderBy], { nullable: true })
+	order?: OrderBy[];
 }
 
 @ArgsType()
@@ -65,26 +172,26 @@ class AddMovieItemInput implements Partial<MovieItem> {
 	@Field()
 	itemName!: string;
 
-	@Field(() => CaseType, { nullable: true })
-	caseType?: CaseType;
+	@Field(() => CaseType)
+	caseType!: CaseType;
 
-	@Field(() => DigitalType, { nullable: true })
-	digitalType?: DigitalType;
+	@Field(() => DigitalType)
+	digitalType!: DigitalType;
 
-	@Field(() => YesNo, { nullable: true })
-	is3D?: YesNo;
+	@Field(() => YesNo)
+	is3D!: YesNo;
 
-	@Field(() => YesNo, { nullable: true })
-	isWatched?: YesNo;
+	@Field(() => YesNo)
+	isWatched!: YesNo;
 
-	@Field(() => FormatType, { nullable: true })
-	formatType?: FormatType;
+	@Field(() => FormatType)
+	formatType!: FormatType;
 
-	@Field(() => StatusType, { nullable: true })
-	itemStatus?: StatusType;
+	@Field(() => StatusType)
+	itemStatus!: StatusType;
 
-	@Field(() => Date)
-	releaseDate!: Date;
+	@Field(() => DateTypeScalar, { nullable: true })
+	releaseDate!: Date | null;
 
 	@Field()
 	itemURL!: string;
@@ -95,32 +202,32 @@ class AddMovieItemInput implements Partial<MovieItem> {
 
 @ArgsType()
 class UpdateMovieItemInput implements Partial<MovieItem> {
-	@Field({ nullable: true })
-	itemName?: string;
+	@Field()
+	itemName!: string;
 
-	@Field(() => CaseType, { nullable: true })
-	caseType?: CaseType;
+	@Field(() => CaseType)
+	caseType!: CaseType;
 
-	@Field(() => DigitalType, { nullable: true })
-	digitalType?: DigitalType;
+	@Field(() => DigitalType)
+	digitalType!: DigitalType;
 
-	@Field(() => YesNo, { nullable: true })
-	is3D?: YesNo;
+	@Field(() => YesNo)
+	is3D!: YesNo;
 
-	@Field(() => YesNo, { nullable: true })
-	isWatched?: YesNo;
+	@Field(() => YesNo)
+	isWatched!: YesNo;
 
-	@Field(() => FormatType, { nullable: true })
-	formatType?: FormatType;
+	@Field(() => FormatType)
+	formatType!: FormatType;
 
-	@Field(() => StatusType, { nullable: true })
-	itemStatus?: StatusType;
+	@Field(() => StatusType)
+	itemStatus!: StatusType;
 
-	@Field(() => Date, { nullable: true })
-	releaseDate?: Date;
+	@Field(() => DateTypeScalar, { nullable: true })
+	releaseDate!: Date | null;
 
-	@Field({ nullable: true })
-	itemURL?: string;
+	@Field()
+	itemURL!: string;
 
 	@Field({ nullable: true })
 	itemNotes?: string;
@@ -128,15 +235,41 @@ class UpdateMovieItemInput implements Partial<MovieItem> {
 
 @Resolver(MovieItem)
 export class MovieItemResolver {
+	@Authorized('user')
 	@Query(() => Int)
 	async countMovieItems (@Args() filters: CountMovieItems): Promise<number> {
 		const movieItemRepository = getRepository(MovieItem);
+		const where = convertFiltersToWhere(filters);
 
 		return await movieItemRepository.count({
-			where: filters,
+			where,
 		});
 	}
 
+	@Authorized('user')
+	@Query(() => [MovieItem])
+	async movieItems (
+		@Args() { limit, skip, order: orderArr, ...filters }: GetMovieItemsArgs,
+	): Promise<MovieItem[]> {
+		const movieItemRepository = getRepository(MovieItem);
+		const order: TSortBy = orderArr
+			? orderArr.reduce((ord, { direction, field }): TSortBy => {
+				ord[field] = direction;
+
+				return ord;
+			}, {} as TSortBy)
+			: { itemID: 'ASC' };
+		const where = convertFiltersToWhere(filters);
+
+		return await movieItemRepository.find({
+			order,
+			skip,
+			take: limit,
+			where,
+		});
+	}
+
+	@Authorized('user')
 	@Query(() => MovieItem)
 	async movieItem (
 		@Arg('itemID', () => Int) itemID: number,
@@ -144,23 +277,7 @@ export class MovieItemResolver {
 		return await MovieItem.findOne({ itemID });
 	}
 
-	@Query(() => [MovieItem])
-	async movieItems (
-		@Args() { limit, skip, order, ...filters }: GetMovieItemsArgs,
-	): Promise<MovieItem[]> {
-		const movieItemRepository = getRepository(MovieItem);
-		const orderCol = order ? order[0] : 'itemID';
-		const orderDir = order ? (order[1] as 'ASC' | 'DESC') : 'ASC';
-		const ordered = { [orderCol]: orderDir };
-
-		return await movieItemRepository.find({
-			order: ordered,
-			skip,
-			take: limit,
-			where: filters,
-		});
-	}
-
+	@Authorized('admin')
 	@Mutation(() => MovieItem)
 	async addMovieItem (
 		@Args()
@@ -173,12 +290,13 @@ export class MovieItemResolver {
 		return movieItem;
 	}
 
+	@Authorized('admin')
 	@Mutation(() => MovieItem)
 	async markMovieWatched (
-		@Arg('id', () => Int) id: number,
+		@Arg('itemID', () => Int) itemID: number,
 		@Arg('isWatched', () => YesNo) isWatched: YesNo,
 	): Promise<MovieItem> {
-		const movieItem = await MovieItem.findOne(id);
+		const movieItem = await MovieItem.findOne(itemID);
 
 		if (!movieItem) throw new Error('Movie Item not found!');
 
@@ -188,12 +306,13 @@ export class MovieItemResolver {
 		return movieItem;
 	}
 
+	@Authorized('admin')
 	@Mutation(() => MovieItem)
 	async updateMovieItem (
-		@Arg('id', () => Int) id: number,
+		@Arg('itemID', () => Int) itemID: number,
 		@Args() data: UpdateMovieItemInput,
 	): Promise<MovieItem> {
-		const movieItem = await MovieItem.findOne(id);
+		const movieItem = await MovieItem.findOne(itemID);
 
 		if (!movieItem) throw new Error('Movie Item not found!');
 

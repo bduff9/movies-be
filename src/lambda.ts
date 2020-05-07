@@ -1,5 +1,4 @@
 import { APIGatewayProxyEvent, Context } from 'aws-lambda';
-
 import 'reflect-metadata';
 
 import { getGQLServer, runApollo } from './util/apollo';

@@ -2,6 +2,7 @@ import {
 	Arg,
 	Args,
 	ArgsType,
+	Authorized,
 	Field,
 	Int,
 	Mutation,
@@ -37,16 +38,19 @@ class UpdateMovieInput implements Partial<Movie> {
 
 @Resolver(Movie)
 export class MovieResolver {
+	@Authorized('user')
 	@Query(() => Int)
 	async countMovies (): Promise<number> {
 		return await Movie.count();
 	}
 
+	@Authorized('user')
 	@Query(() => [Movie])
 	async movies (@Arg('itemID', () => Int) itemID: number): Promise<Movie[]> {
 		return await Movie.find({ itemID });
 	}
 
+	@Authorized('admin')
 	@Mutation(() => Movie)
 	async addMovie (@Args() newMovie: AddMovieInput): Promise<Movie> {
 		const movie = Movie.create(newMovie);
@@ -56,9 +60,10 @@ export class MovieResolver {
 		return movie;
 	}
 
+	@Authorized('admin')
 	@Mutation(() => Movie)
 	async updateMovie (
-		@Arg('id', () => Int) movieID: number,
+		@Arg('movieID', () => Int) movieID: number,
 		@Args() data: UpdateMovieInput,
 	): Promise<Movie> {
 		const movie = await Movie.findOne(movieID);

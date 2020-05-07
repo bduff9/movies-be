@@ -1,7 +1,7 @@
 import { registerEnumType } from 'type-graphql';
 
 enum FormatType {
-	BluRay = 'Blu-Ray',
+	BluRay = 'Blu-ray',
 	DVD = 'DVD',
 	Digital = 'Digital',
 	UV = 'UV',

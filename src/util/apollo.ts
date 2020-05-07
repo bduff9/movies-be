@@ -11,7 +11,27 @@ import { createConnection, Connection } from 'typeorm';
 import { MovieItemResolver } from '../resolver/MovieItemResolver';
 import { MovieResolver } from '../resolver/MovieResolver';
 
-type TCustomContext = {
+import { customAuthChecker } from './auth';
+
+export type TUserType = 'admin' | 'user';
+type TCognitoClaims = {
+	sub: string;
+	'cognito:groups': TUserType[];
+	email_verified: boolean;
+	iss: string;
+	'cognito:username': string;
+	given_name: string;
+	aud: string;
+	event_id: string;
+	token_use: string;
+	auth_time: number;
+	exp: number;
+	iat: number;
+	family_name: string;
+	email: string;
+};
+export type TCustomContext = {
+	claims?: null | TCognitoClaims;
 	context: unknown;
 	dbConnection: Connection;
 	event: unknown;
@@ -22,17 +42,23 @@ type TCustomContext = {
 export const getGQLServer = async (): Promise<ApolloServer> => {
 	const dbConnection = await createConnection();
 	const schema = await buildSchema({
+		authChecker: customAuthChecker,
 		resolvers: [MovieResolver, MovieItemResolver],
 	});
 
 	return new ApolloServer({
-		context: ({ event, context }): TCustomContext => ({
-			context,
-			dbConnection,
-			event,
-			functionName: context.functionName,
-			headers: event.headers,
-		}),
+		context: ({ event, context }): TCustomContext => {
+			const claims = event?.requestContext?.authorizer?.claims;
+
+			return {
+				claims,
+				context,
+				dbConnection,
+				event,
+				functionName: context.functionName,
+				headers: event.headers,
+			};
+		},
 		playground: {
 			endpoint: '/dev/graphql',
 		},

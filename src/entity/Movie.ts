@@ -1,4 +1,4 @@
-import { ObjectType, Field, ID, Int } from 'type-graphql';
+import { ObjectType, Field, Int } from 'type-graphql';
 import {
 	BaseEntity,
 	Column,
@@ -17,7 +17,7 @@ import { MovieItem } from './MovieItem';
 @Entity('movies', { schema: 'media_tracker' })
 @ObjectType()
 export class Movie extends BaseEntity {
-	@Field(() => ID)
+	@Field(() => Int)
 	@PrimaryGeneratedColumn({ type: 'int', name: 'MOVIEID', unsigned: true })
 	public movieID!: number;
 
