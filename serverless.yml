@@ -1,21 +1,35 @@
 service: movies-be
 
-provider:
-  name: aws
-  runtime: nodejs12.x
-  stage: ${opt:stage, 'local'}
-  environment:
-    DB_HOST: ${self:custom.database.${self:provider.stage}.host}
-    DB_PASSWORD: ${self:custom.database.${self:provider.stage}.password}
-    DB_PORT: ${self:custom.database.${self:provider.stage}.port}
-    DB_USERNAME: ${self:custom.database.${self:provider.stage}.username}
-
 plugins:
   - serverless-stage-manager
   - serverless-plugin-typescript
   - serverless-offline
 
+package:
+  include:
+    - ormconfig.js
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  vpc:
+    securityGroupIds:
+      - sg-892106a3
+    subnetIds:
+      - subnet-4b8c606a
+      - subnet-0102373f
+  stage: ${opt:stage, 'local'}
+  environment:
+    CODE_PATH: ${self:custom.codePath.${self:provider.stage}}
+    DB_HOST: ${self:custom.database.${self:provider.stage}.host}
+    DB_PASSWORD: ${self:custom.database.${self:provider.stage}.password}
+    DB_PORT: ${self:custom.database.${self:provider.stage}.port}
+    DB_USERNAME: ${self:custom.database.${self:provider.stage}.username}
+
 custom:
+  codePath:
+    local: .build/src
+    prod: src
   database:
     local:
       host: localhost
@@ -45,3 +59,4 @@ functions:
           path: graphql
           method: get
           cors: true
+    timeout: 10

@@ -1,6 +1,4 @@
-const { DB_HOST, DB_PASSWORD, DB_PORT, DB_USERNAME } = process.env;
-
-console.log({ DB_HOST, DB_PASSWORD, DB_PORT, DB_USERNAME });
+const { CODE_PATH, DB_HOST, DB_PASSWORD, DB_PORT, DB_USERNAME } = process.env;
 
 module.exports = {
 	name: 'default',
@@ -12,9 +10,9 @@ module.exports = {
 	database: 'media_tracker',
 	synchronize: true,
 	logging: false,
-	entities: ['.build/src/entity/**/*.js'],
-	migrations: ['.build/src/migration/**/*.js'],
-	subscribers: ['.build/src/subscriber/**/*.js'],
+	entities: [`${CODE_PATH}/entity/**/*.js`],
+	migrations: [`${CODE_PATH}/migration/**/*.js`],
+	subscribers: [`${CODE_PATH}/subscriber/**/*.js`],
 	cli: {
 		entitiesDir: 'src/entity',
 		migrationsDir: 'src/migration',

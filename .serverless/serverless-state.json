@@ -9,7 +9,12 @@
       "variableSyntax": "\\${([^{}]+?)}",
       "name": "aws",
       "runtime": "nodejs12.x",
+      "vpc": {
+        "securityGroupIds": ["sg-892106a3"],
+        "subnetIds": ["subnet-4b8c606a", "subnet-0102373f"]
+      },
       "environment": {
+        "CODE_PATH": "src",
         "DB_HOST": "aswnn-prod.cluster-cp71bys5uwvt.us-east-1.rds.amazonaws.com",
         "DB_PASSWORD": "q69C%MK**Kv%",
         "DB_PORT": 3306,
@@ -142,7 +147,21 @@
                     "lambdaRole"
                   ]
                 ]
-              }
+              },
+              "ManagedPolicyArns": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+                    ]
+                  ]
+                }
+              ]
             }
           },
           "GraphqlLambdaFunction": {
@@ -152,7 +171,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/movies-be/prod/1592234387650-2020-06-15T15:19:47.650Z/movies-be.zip"
+                "S3Key": "serverless/movies-be/prod/1592241956234-2020-06-15T17:25:56.234Z/movies-be.zip"
               },
               "FunctionName": "movies-be-prod-graphql",
               "Handler": "src/lambda.graphqlHandler",
@@ -161,26 +180,35 @@
                 "Fn::GetAtt": ["IamRoleLambdaExecution", "Arn"]
               },
               "Runtime": "nodejs12.x",
-              "Timeout": 6,
+              "Timeout": 10,
               "Environment": {
                 "Variables": {
+                  "CODE_PATH": "src",
                   "DB_HOST": "aswnn-prod.cluster-cp71bys5uwvt.us-east-1.rds.amazonaws.com",
                   "DB_PASSWORD": "q69C%MK**Kv%",
                   "DB_PORT": 3306,
                   "DB_USERNAME": "mt_user"
                 }
+              },
+              "VpcConfig": {
+                "SecurityGroupIds": {
+                  "$ref": "$[\"service\"][\"provider\"][\"vpc\"][\"securityGroupIds\"]"
+                },
+                "SubnetIds": {
+                  "$ref": "$[\"service\"][\"provider\"][\"vpc\"][\"subnetIds\"]"
+                }
               }
             },
             "DependsOn": ["GraphqlLogGroup", "IamRoleLambdaExecution"]
           },
-          "GraphqlLambdaVersionLC5D05l35W7N8dC5043kQs8ADfBGKGXKli4EVMohOCE": {
+          "GraphqlLambdaVersionyFJNcioFz01BL71PWDvmFlaCJeb4FbtOYgIAngSvM8": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "GraphqlLambdaFunction"
               },
-              "CodeSha256": "WmGCxw+/fLr0RBLtAHXsHpp7E7M5zGS56XVcGGgAkHU="
+              "CodeSha256": "krGuhlNvb5eEHqwbIv2N967WM1rZSZq5b0BtLJVCsCk="
             }
           },
           "ApiGatewayRestApi": {
@@ -349,7 +377,7 @@
               ]
             }
           },
-          "ApiGatewayDeployment1592234325773": {
+          "ApiGatewayDeployment1592241826155": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -407,7 +435,7 @@
           "GraphqlLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "GraphqlLambdaVersionLC5D05l35W7N8dC5043kQs8ADfBGKGXKli4EVMohOCE"
+              "Ref": "GraphqlLambdaVersionyFJNcioFz01BL71PWDvmFlaCJeb4FbtOYgIAngSvM8"
             }
           },
           "ServiceEndpoint": {
@@ -501,10 +529,13 @@
             }
           }
         }
-      },
-      "vpc": {}
+      }
     },
     "custom": {
+      "codePath": {
+        "local": ".build/src",
+        "prod": "src"
+      },
       "database": {
         "local": {
           "host": "localhost",
@@ -591,16 +622,16 @@
             }
           }
         ],
+        "timeout": 10,
         "name": "movies-be-prod-graphql",
         "package": {
           "exclude": ["node_modules/serverless-plugin-typescript"],
           "include": []
         },
         "memory": 1024,
-        "timeout": 6,
         "runtime": "nodejs12.x",
         "vpc": {},
-        "versionLogicalId": "GraphqlLambdaVersionLC5D05l35W7N8dC5043kQs8ADfBGKGXKli4EVMohOCE"
+        "versionLogicalId": "GraphqlLambdaVersionyFJNcioFz01BL71PWDvmFlaCJeb4FbtOYgIAngSvM8"
       }
     },
     "serviceFilename": "serverless.yml",
@@ -609,7 +640,7 @@
     "artifact": "/Users/bduffey2/projects/movies/movies-be/.build/.serverless/movies-be.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/movies-be/prod/1592234387650-2020-06-15T15:19:47.650Z",
+    "artifactDirectoryName": "serverless/movies-be/prod/1592241956234-2020-06-15T17:25:56.234Z",
     "artifact": "movies-be.zip"
   }
 }
