@@ -1,18 +1,35 @@
-service: apollo-lambda
+service: movies-be
 
 provider:
   name: aws
   runtime: nodejs12.x
+  stage: ${opt:stage, 'local'}
+  environment:
+    DB_HOST: ${self:custom.database.${self:provider.stage}.host}
+    DB_PASSWORD: ${self:custom.database.${self:provider.stage}.password}
+    DB_PORT: ${self:custom.database.${self:provider.stage}.port}
+    DB_USERNAME: ${self:custom.database.${self:provider.stage}.username}
 
 plugins:
+  - serverless-stage-manager
   - serverless-plugin-typescript
   - serverless-offline
 
 custom:
+  database:
+    local:
+      host: localhost
+      password: root
+      port: 3308
+      username: root
+    prod: ${ssm:/aws/reference/secretsmanager/moviesDBUser~true}
   serverless-offline:
     httpPort: 4000
     websocketPort: 4001
     lambdaPort: 4002
+  stage: ${opt:stage, self:provider.stage}
+  stages:
+    - prod
 
 functions:
   graphql:

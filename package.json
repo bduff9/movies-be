@@ -61,6 +61,7 @@
     "scriptlint": "2.1.1",
     "serverless-offline": "6.1.5",
     "serverless-plugin-typescript": "1.1.9",
+    "serverless-stage-manager": "1.0.5",
     "ts-jest": "25.5.0",
     "typescript": "3.8.3"
   },
