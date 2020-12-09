@@ -12,19 +12,18 @@ package:
 provider:
   name: aws
   runtime: nodejs12.x
-  vpc:
-    securityGroupIds:
-      - sg-892106a3
-    subnetIds:
-      - subnet-4b8c606a
-      - subnet-0102373f
+  memorySize: 256
   stage: ${opt:stage, 'local'}
   environment:
     CODE_PATH: ${self:custom.codePath.${self:provider.stage}}
-    DB_HOST: ${self:custom.database.${self:provider.stage}.host}
-    DB_PASSWORD: ${self:custom.database.${self:provider.stage}.password}
-    DB_PORT: ${self:custom.database.${self:provider.stage}.port}
-    DB_USERNAME: ${self:custom.database.${self:provider.stage}.username}
+    host: ${self:custom.database.${self:provider.stage}.host}
+    password: ${self:custom.database.${self:provider.stage}.password}
+    port: ${self:custom.database.${self:provider.stage}.port}
+    region: ${self:custom.region}
+    resourceArn: ${self:custom.database.${self:provider.stage}.resourceArn}
+    secretArn: ${self:custom.database.${self:provider.stage}.secretArn}
+    type: ${self:custom.database.${self:provider.stage}.type}
+    username: ${self:custom.database.${self:provider.stage}.username}
 
 custom:
   codePath:
@@ -35,14 +34,26 @@ custom:
       host: localhost
       password: root
       port: 3308
+      resourceArn: ""
+      secretArn: ""
+      type: mysql
       username: root
-    prod: ${ssm:/aws/reference/secretsmanager/moviesDBUser~true}
+    prod:
+      host: ""
+      password: ""
+      port: 3306
+      resourceArn: "arn:aws:rds:us-east-1:293459602653:cluster:aswnn-prod"
+      secretArn: "arn:aws:secretsmanager:us-east-1:293459602653:secret:moviesDBUser-ihBBwe"
+      type: "aurora-data-api"
+      username: ""
+  region: ${opt:region, self:provider.region}
   serverless-offline:
     httpPort: 4000
     websocketPort: 4001
     lambdaPort: 4002
   stage: ${opt:stage, self:provider.stage}
   stages:
+    - local
     - prod
 
 functions:

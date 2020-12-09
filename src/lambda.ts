@@ -1,5 +1,4 @@
 import middy from '@middy/core';
-//import cors from '@middy/http-cors';
 import { APIGatewayProxyEvent, Context } from 'aws-lambda';
 import 'reflect-metadata';
 
@@ -21,6 +20,5 @@ const graphql = middy(
 		return response;
 	},
 );
-//.use(cors());
 
 export const graphqlHandler = graphql;

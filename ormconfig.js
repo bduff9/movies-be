@@ -1,13 +1,12 @@
-const { CODE_PATH, DB_HOST, DB_PASSWORD, DB_PORT, DB_USERNAME } = process.env;
+const { CODE_PATH, ...DB_CONFIG } = process.env;
 
 module.exports = {
 	name: 'default',
-	type: 'mysql',
-	host: DB_HOST,
-	password: DB_PASSWORD,
-	port: DB_PORT,
-	username: DB_USERNAME,
+	...DB_CONFIG,
 	database: 'media_tracker',
+	serviceConfigOptions: {
+		// additional options to pass to aws-sdk RDS client
+	},
 	synchronize: true,
 	logging: false,
 	entities: [`${CODE_PATH}/entity/**/*.js`],

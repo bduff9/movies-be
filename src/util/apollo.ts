@@ -79,5 +79,11 @@ export const runApollo = (
 		const callback = (error: unknown, body: unknown): void =>
 			error ? reject(error) : resolve(body);
 
+		event.httpMethod = event.httpMethod || 'POST';
+		event.headers = {
+			'content-type': 'application/json',
+			...(event.headers || {}),
+		};
+
 		apollo(event, context, callback);
 	});
