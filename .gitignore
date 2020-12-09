@@ -24,4 +24,4 @@ node_modules/
 tmp/
 temp/
 ormconfig.json
-.serverless
+.serverless/*.zip
