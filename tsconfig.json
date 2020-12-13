@@ -11,7 +11,6 @@
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
     "lib": ["ES6"],
-    "module": "CommonJS",
     "moduleResolution": "node",
     "noImplicitAny": true,
     "noImplicitReturns": true,
@@ -28,7 +27,7 @@
     "strictFunctionTypes": true,
     "strictNullChecks": true,
     "strictPropertyInitialization": true,
-    "target": "ES5"
+    "target": "ES6"
   },
   "exclude": ["node_modules"],
   "include": ["ormconfig.js", "src"]

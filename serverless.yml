@@ -33,7 +33,8 @@ provider:
 
 custom:
   bundle:
-    caching: true
+    caching: false
+    # caching: true
     copyFiles:
       - from: "./ormconfig.js"
         to: "./"
