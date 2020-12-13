@@ -7,17 +7,16 @@
     "provider": {
       "name": "aws",
       "runtime": "nodejs12.x",
+      "memorySize": 256,
       "stage": "prod",
       "environment": {
         "CODE_PATH": "src",
-        "host": "",
-        "password": "",
+        "database": "Tnjdwvqglw",
+        "host": "remotemysql.com",
+        "password": "y3cPFHYSnI",
         "port": "3306",
         "region": "us-east-1",
-        "resourceArn": "arn:aws:rds:us-east-1:293459602653:cluster:aswnn-prod",
-        "secretArn": "arn:aws:secretsmanager:us-east-1:293459602653:secret:moviesDBUser-ihBBwe",
-        "type": "aurora-data-api",
-        "username": ""
+        "username": "Tnjdwvqglw"
       },
       "variableSyntax": "\\${([^{}:]+?(?:\\(|:)(?:[^:{}][^{}]*?)?)}",
       "region": "us-east-1",
@@ -157,40 +156,38 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/movies-be/prod/1604606146803-2020-11-05T19:55:46.803Z/movies-be.zip"
+                "S3Key": "serverless/movies-be/prod/1607885929256-2020-12-13T18:58:49.256Z/movies-be.zip"
               },
               "FunctionName": "movies-be-prod-graphql",
               "Handler": "src/lambda.graphqlHandler",
-              "MemorySize": 1024,
+              "MemorySize": 256,
               "Role": {
                 "Fn::GetAtt": ["IamRoleLambdaExecution", "Arn"]
               },
               "Runtime": "nodejs12.x",
-              "Timeout": 10,
+              "Timeout": 29,
               "Environment": {
                 "Variables": {
                   "CODE_PATH": "src",
-                  "host": "",
-                  "password": "",
+                  "database": "Tnjdwvqglw",
+                  "host": "remotemysql.com",
+                  "password": "y3cPFHYSnI",
                   "port": "3306",
                   "region": "us-east-1",
-                  "resourceArn": "arn:aws:rds:us-east-1:293459602653:cluster:aswnn-prod",
-                  "secretArn": "arn:aws:secretsmanager:us-east-1:293459602653:secret:moviesDBUser-ihBBwe",
-                  "type": "aurora-data-api",
-                  "username": ""
+                  "username": "Tnjdwvqglw"
                 }
               }
             },
             "DependsOn": ["GraphqlLogGroup"]
           },
-          "GraphqlLambdaVersionwqJEGhyoEpH4cc9W0hpNNOX9UWLJf5USxCdR1a4g": {
+          "GraphqlLambdaVersionEbYpfxnZj3YCHT2hOH0J7s7Vmay8X6CUXebEDZjSnc": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "GraphqlLambdaFunction"
               },
-              "CodeSha256": "nLl3l1m6HAIkrUJgpmpsn2YKwjkr9rvCMlHSI4QjuHE="
+              "CodeSha256": "IMgu8CXySDJQK+WOCPWD6Glpd/iTaGV4LVGF7Z0A310="
             }
           },
           "ApiGatewayRestApi": {
@@ -359,7 +356,7 @@
               ]
             }
           },
-          "ApiGatewayDeployment1604606039082": {
+          "ApiGatewayDeployment1607885857238": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -417,7 +414,7 @@
           "GraphqlLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "GraphqlLambdaVersionwqJEGhyoEpH4cc9W0hpNNOX9UWLJf5USxCdR1a4g"
+              "Ref": "GraphqlLambdaVersionEbYpfxnZj3YCHT2hOH0J7s7Vmay8X6CUXebEDZjSnc"
             }
           },
           "ServiceEndpoint": {
@@ -515,28 +512,35 @@
       "vpc": {}
     },
     "custom": {
+      "bundle": {
+        "caching": true,
+        "copyFiles": [
+          {
+            "from": "./ormconfig.js",
+            "to": "./"
+          }
+        ],
+        "linting": true,
+        "sourcemaps": true
+      },
       "codePath": {
         "local": ".build/src",
         "prod": "src"
       },
       "database": {
         "local": {
+          "database": "media_tracker",
           "host": "localhost",
           "password": "root",
           "port": 3308,
-          "resourceArn": "",
-          "secretArn": "",
-          "type": "mysql",
           "username": "root"
         },
         "prod": {
-          "host": "",
-          "password": "",
+          "database": "Tnjdwvqglw",
+          "host": "remotemysql.com",
+          "password": "y3cPFHYSnI",
           "port": 3306,
-          "resourceArn": "arn:aws:rds:us-east-1:293459602653:cluster:aswnn-prod",
-          "secretArn": "arn:aws:secretsmanager:us-east-1:293459602653:secret:moviesDBUser-ihBBwe",
-          "type": "aurora-data-api",
-          "username": ""
+          "username": "Tnjdwvqglw"
         }
       },
       "region": "us-east-1",
@@ -609,16 +613,16 @@
             }
           }
         ],
-        "timeout": 10,
+        "timeout": 29,
         "name": "movies-be-prod-graphql",
         "package": {
           "exclude": ["node_modules/serverless-plugin-typescript"],
           "include": []
         },
-        "memory": 1024,
+        "memory": 256,
         "runtime": "nodejs12.x",
         "vpc": {},
-        "versionLogicalId": "GraphqlLambdaVersionwqJEGhyoEpH4cc9W0hpNNOX9UWLJf5USxCdR1a4g"
+        "versionLogicalId": "GraphqlLambdaVersionEbYpfxnZj3YCHT2hOH0J7s7Vmay8X6CUXebEDZjSnc"
       }
     },
     "configValidationMode": "warn",
@@ -634,7 +638,7 @@
       "package": {
         "include": ["ormconfig.js"],
         "artifact": "/Users/bduffey2/projects/movies/movies-be/.serverless/movies-be.zip",
-        "artifactDirectoryName": "serverless/movies-be/prod/1604606146803-2020-11-05T19:55:46.803Z"
+        "artifactDirectoryName": "serverless/movies-be/prod/1607885929256-2020-12-13T18:58:49.256Z"
       },
       "provider": {
         "$ref": "$[\"service\"][\"provider\"]"
@@ -650,7 +654,7 @@
     "artifact": "/Users/bduffey2/projects/movies/movies-be/.build/.serverless/movies-be.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/movies-be/prod/1604606146803-2020-11-05T19:55:46.803Z",
+    "artifactDirectoryName": "serverless/movies-be/prod/1607885929256-2020-12-13T18:58:49.256Z",
     "artifact": "movies-be.zip"
   }
 }

@@ -45,7 +45,7 @@ module.exports = {
 		'linebreak-style': 'off',
 		'no-console': 'off',
 		'no-constant-condition': 'off',
-		'no-unused-vars': [
+		'@typescript-eslint/no-unused-vars': [
 			'warn',
 			{
 				varsIgnorePattern: 'UU',

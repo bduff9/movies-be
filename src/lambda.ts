@@ -8,6 +8,14 @@ const serverPromise = getGQLServer();
 
 const graphql = middy(
 	async (event: APIGatewayProxyEvent, context: Context): Promise<unknown> => {
+		context.callbackWaitsForEmptyEventLoop = false;
+
+		if (event.body === 'test') {
+			console.log({ context, event });
+
+			return '';
+		}
+
 		const server = await serverPromise;
 		const gqlServer = server.createHandler({
 			cors: {

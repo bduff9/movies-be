@@ -25,3 +25,4 @@ tmp/
 temp/
 ormconfig.json
 .serverless/*.zip
+.webpack

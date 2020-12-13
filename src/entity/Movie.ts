@@ -33,14 +33,10 @@ export class Movie extends BaseEntity {
 	@Column('varchar', { name: 'MOVIEURL', nullable: true, length: 99 })
 	public movieURL!: string | null;
 
-	@ManyToOne(
-		() => MovieItem,
-		movieItem => movieItem.movies,
-		{
-			onDelete: 'CASCADE',
-			onUpdate: 'CASCADE',
-		},
-	)
+	@ManyToOne('MovieItem', 'movies', {
+		onDelete: 'CASCADE',
+		onUpdate: 'CASCADE',
+	})
 	@JoinColumn([{ name: 'ITEMID', referencedColumnName: 'itemID' }])
 	public item!: MovieItem;
 }

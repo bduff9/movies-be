@@ -92,10 +92,7 @@ export class MovieItem extends BaseEntity {
 	@Column('text', { name: 'ITEMNOTES', nullable: true })
 	public itemNotes!: string | null;
 
-	@OneToMany(
-		() => Movie,
-		movie => movie.item,
-	)
+	@OneToMany('Movie', 'item')
 	public movies!: Movie[];
 
 	@BeforeInsert()

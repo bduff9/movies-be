@@ -1,12 +1,12 @@
 const { CODE_PATH, ...DB_CONFIG } = process.env;
 
+/**
+ * @type import("typeorm").ConnectionOptions c
+ */
 module.exports = {
-	name: 'default',
 	...DB_CONFIG,
-	database: 'media_tracker',
-	serviceConfigOptions: {
-		// additional options to pass to aws-sdk RDS client
-	},
+	name: 'default',
+	type: 'mysql',
 	synchronize: true,
 	logging: false,
 	entities: [`${CODE_PATH}/entity/**/*.js`],
