@@ -2,8 +2,12 @@ service: movies-be
 
 plugins:
   - serverless-stage-manager
-  - serverless-bundle
+  - serverless-plugin-typescript
   - serverless-offline
+
+package:
+  include:
+    - ormconfig.js
 
 provider:
   name: aws
@@ -12,39 +16,19 @@ provider:
   stage: ${opt:stage, 'local'}
   environment:
     CODE_PATH: ${self:custom.codePath.${self:provider.stage}}
-    database: ${self:custom.database.${self:provider.stage}.database}
+    database: ${self:custom.database.${self:provider.stage}.dbname}
     host: ${self:custom.database.${self:provider.stage}.host}
     password: ${self:custom.database.${self:provider.stage}.password}
     port: ${self:custom.database.${self:provider.stage}.port}
-    region: ${self:custom.region}
     username: ${self:custom.database.${self:provider.stage}.username}
-    # MANUAL CONFIG HERE
-    # TYPEORM_CONNECTION: mysql
-    # TYPEORM_DATABASE: ${self:custom.database.${self:provider.stage}.database}
-    # TYPEORM_ENTITIES: "./src/*.js"
-    # TYPEORM_HOST: ${self:custom.database.${self:provider.stage}.host}
-    # TYPEORM_LOGGING: true
-    # TYPEORM_MIGRATIONS: "./src/*.js"
-    # TYPEORM_PASSWORD: ${self:custom.database.${self:provider.stage}.password}
-    # TYPEORM_PORT: ${self:custom.database.${self:provider.stage}.port}
-    # TYPEORM_SUBSCRIBERS: "./src/*.js"
-    # TYPEORM_SYNCHRONIZE: true
-    # TYPEORM_USERNAME: ${self:custom.database.${self:provider.stage}.username}
 
 custom:
-  bundle:
-    caching: true
-    copyFiles:
-      - from: "./ormconfig.js"
-        to: "./"
-    linting: true
-    sourcemaps: true
   codePath:
     local: .build/src
     prod: src
   database:
     local:
-      database: media_tracker
+      dbname: media_tracker
       host: localhost
       password: root
       port: 3308
@@ -74,4 +58,4 @@ functions:
           path: graphql
           method: get
           cors: true
-    timeout: 29
+    timeout: 9

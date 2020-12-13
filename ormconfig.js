@@ -1,14 +1,18 @@
-const { CODE_PATH, ...DB_CONFIG } = process.env;
+const { CODE_PATH, database, host, password, port, username } = process.env;
 
 /**
  * @type import("typeorm").ConnectionOptions c
  */
-module.exports = {
-	...DB_CONFIG,
+const config = {
 	name: 'default',
 	type: 'mysql',
+	database,
+	host,
+	password,
+	port: port !== undefined ? +port : port,
+	username,
 	synchronize: true,
-	logging: false,
+	logging: true,
 	entities: [`${CODE_PATH}/entity/**/*.js`],
 	migrations: [`${CODE_PATH}/migration/**/*.js`],
 	subscribers: [`${CODE_PATH}/subscriber/**/*.js`],
@@ -18,3 +22,5 @@ module.exports = {
 		subscribersDir: 'src/subscriber',
 	},
 };
+
+module.exports = config;
