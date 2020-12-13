@@ -27,7 +27,7 @@
     "lint:script:fix": "scriptlint --fix",
     "setup": "npx typesync && npm i && npm prune",
     "start": "ts-node src/lambda.ts",
-    "test": "jest",
+    "test": "jest --passWithNoTests",
     "test:coverage": "jest --coverage --env=jsdom --coverage",
     "test:watch": "jest --watch",
     "typeCheck": "tsc"
