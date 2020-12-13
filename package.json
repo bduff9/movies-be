@@ -79,9 +79,7 @@
   },
   "jest": {
     "preset": "ts-jest",
-    "setupFiles": [
-      "<rootDir>src/setupTests.js"
-    ]
+    "setupFiles": []
   },
   "lint-staged": {
     "*.{js,ts}": [
