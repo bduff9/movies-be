@@ -33,7 +33,7 @@ custom:
       password: root
       port: 3308
       username: root
-    prod: ${ssm:/aws/reference/secretsmanager/remotemysql-com~true}
+    prod: ${ssm:/aws/reference/secretsmanager/heliohost-mysql_movies~true}
   region: ${opt:region, self:provider.region}
   serverless-offline:
     httpPort: 4000
@@ -58,4 +58,4 @@ functions:
           path: graphql
           method: get
           cors: true
-    timeout: 9
+    timeout: 30
