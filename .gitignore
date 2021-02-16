@@ -26,3 +26,5 @@ temp/
 ormconfig.json
 .serverless
 .webpack
+
+.vercel

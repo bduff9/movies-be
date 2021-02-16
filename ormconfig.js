@@ -1,4 +1,4 @@
-const { CODE_PATH, database, host, password, port, username } = process.env;
+const { database, host, password, port, username } = process.env;
 
 /**
  * @type import("typeorm").ConnectionOptions c
@@ -11,11 +11,11 @@ const config = {
 	password,
 	port: port !== undefined ? +port : port,
 	username,
-	synchronize: true,
+	synchronize: false,
 	logging: true,
-	entities: [`${CODE_PATH}/entity/**/*.js`],
-	migrations: [`${CODE_PATH}/migration/**/*.js`],
-	subscribers: [`${CODE_PATH}/subscriber/**/*.js`],
+	entities: ['.build/src/entity/**/*.js'],
+	migrations: ['.build/src/migration/**/*.js'],
+	subscribers: ['.build/src/subscriber/**/*.js'],
 	cli: {
 		entitiesDir: 'src/entity',
 		migrationsDir: 'src/migration',

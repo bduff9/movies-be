@@ -13,13 +13,13 @@
   "license": "MIT",
   "author": "Brian Duffey <brian.e.duffey@gmail.com>",
   "contributors": [],
-  "main": "src/lambda.ts",
+  "main": "api/graphql.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/bduff9/movies-be"
   },
   "scripts": {
-    "dev": "sls offline",
+    "env": "sync-dotenv",
     "gql:download": "apollo client:download-schema src/schema.graphql --endpoint=http://localhost:4000/dev/graphql",
     "lint": "eslint src/ --ext .js,.ts",
     "lint:fix": "eslint src/ --ext .js,.ts --fix",
@@ -28,69 +28,74 @@
     "setup": "npx typesync && npm i && npm prune",
     "start": "ts-node src/lambda.ts",
     "test": "jest --passWithNoTests",
+    "test:ci": "jest --ci --reporters='default' --reporters='./github-actions-reporter'",
     "test:coverage": "jest --coverage --env=jsdom --coverage",
     "test:watch": "jest --watch",
-    "typeCheck": "tsc"
+    "typeCheck": "tsc",
+    "validate": "npm run lint && tsc --noEmit && npx ts-prune",
+    "vercel-build": "tsc && typeorm migration:run"
   },
   "config": {},
   "dependencies": {
-    "@middy/core": "1.4.0",
-    "apollo-server-lambda": "2.19.0",
-    "aws-lambda": "1.0.6",
-    "class-validator": "0.12.2",
-    "graphql": "15.4.0",
+    "@saeris/apollo-server-vercel": "0.4.0",
+    "@sentry/node": "6.1.0",
+    "@sentry/tracing": "6.1.0",
+    "class-validator": "0.13.1",
+    "graphql": "15.5.0",
     "mysql2": "2.2.5",
     "reflect-metadata": "0.1.13",
     "type-graphql": "1.1.1",
-    "typeorm": "0.2.29"
+    "typeorm": "0.2.31"
   },
   "devDependencies": {
-    "@types/aws-lambda": "8.10.66",
     "@types/eslint": "7.2.6",
-    "@types/node": "14.14.13",
-    "@typescript-eslint/eslint-plugin": "4.9.1",
-    "@typescript-eslint/parser": "4.9.1",
-    "eslint": "7.15.0",
+    "@types/node": "14.14.28",
+    "@typescript-eslint/eslint-plugin": "4.15.1",
+    "@typescript-eslint/parser": "4.15.1",
+    "eslint": "7.20.0",
     "eslint-plugin-graphql": "4.0.0",
     "eslint-plugin-import": "2.22.1",
-    "eslint-plugin-prettierx": "0.14.0",
+    "eslint-plugin-prettierx": "0.17.1",
     "eslint-plugin-you-dont-need-momentjs": "1.6.0",
-    "husky": "4.3.6",
+    "husky": "5.0.9",
     "jest": "26.6.3",
-    "lint-staged": "10.5.3",
+    "lint-staged": "10.5.4",
     "npm-package-json-lint": "5.1.0",
     "scriptlint": "2.1.2",
-    "serverless-offline": "6.8.0",
-    "serverless-plugin-typescript": "1.1.9",
-    "serverless-stage-manager": "1.0.5",
-    "ts-jest": "26.4.4",
-    "typescript": "4.1.3"
+    "sync-dotenv": "2.6.2",
+    "ts-jest": "26.5.1",
+    "typescript": "4.1.5",
+    "vercel": "21.2.3"
   },
   "engines": {
-    "node": "12.16.2"
+    "node": "14.x"
   },
   "private": true,
   "husky": {
     "hooks": {
       "post-merge": "npm run setup",
-      "pre-commit": "lint-staged",
+      "pre-commit": "lint-staged && npm run env",
       "pre-push": "npm run test"
     }
   },
-  "jest": {
-    "preset": "ts-jest",
-    "setupFiles": []
-  },
   "lint-staged": {
     "*.{js,ts}": [
-      "eslint --fix"
+      "eslint --quiet --fix",
+      "git add"
     ],
     "*.{md,json}": [
-      "prettierx --write"
+      "prettierx --write",
+      "git add"
     ],
     "package.json": [
       "scriptlint --fix",
       "npmPkgJsonLint ."
+    ]
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "setupFiles": [
+      "<rootDir>setupTests.js"
     ]
   }
 }
