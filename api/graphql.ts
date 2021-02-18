@@ -11,7 +11,15 @@ import * as entities from '../src/entity';
 import * as resolvers from '../src/resolver';
 import { customAuthChecker } from '../src/util/auth';
 
-const { database, host, password, port, username, VERCEL_ENV } = process.env;
+const {
+	database,
+	domain,
+	host,
+	password,
+	port,
+	username,
+	VERCEL_ENV,
+} = process.env;
 
 Sentry.init({
 	dsn:
@@ -98,7 +106,36 @@ const getApolloServerHandler = async (): Promise<TApolloServerHandler> => {
 			introspection: true,
 			playground: true,
 			schema,
-		}).createHandler();
+		}).createHandler({
+			cors: {
+				allowedHeaders: [
+					'X-CSRF-Token',
+					'X-Requested-With',
+					'Accept',
+					'Accept-Version',
+					'authorization',
+					'Content-Length',
+					'Content-MD5',
+					'Content-Type',
+					'Date',
+					'X-Api-Version',
+				],
+				credentials: true,
+				methods: ['OPTIONS', 'POST'],
+				origin: domain,
+			},
+			onHealthCheck: async (req: VercelRequest): Promise<unknown> => {
+				//TODO: check if db is up
+				const database = 'UNKNOWN';
+
+				console.log({ req });
+
+				return {
+					database,
+					server: 'UP',
+				};
+			},
+		});
 	}
 
 	return apolloServerHandler;
