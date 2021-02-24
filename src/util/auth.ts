@@ -21,7 +21,7 @@ export const getUserFromContext = (
 			'HS256',
 		);
 	} catch (error) {
-		console.log({ error });
+		console.debug('Failed to decode JWT', error);
 	}
 
 	return userObj;
