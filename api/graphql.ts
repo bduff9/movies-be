@@ -9,7 +9,7 @@ import { createConnection, Connection } from 'typeorm';
 
 import * as entities from '../src/entity';
 import * as resolvers from '../src/resolver';
-import { customAuthChecker } from '../src/util/auth';
+import { customAuthChecker, getUserFromContext } from '../src/util/auth';
 
 const {
 	database,
@@ -27,30 +27,11 @@ Sentry.init({
 	tracesSampleRate: 1.0,
 });
 
-export type TUserType = 'admin' | 'user';
-type TCognitoClaims = {
-	sub: string;
-	'cognito:groups': TUserType[];
-	email_verified: boolean;
-	iss: string;
-	'cognito:username': string;
-	given_name: string;
-	aud: string;
-	event_id: string;
-	token_use: string;
-	auth_time: number;
-	exp: number;
-	iat: number;
-	family_name: string;
-	email: string;
-};
+export type TUserType = 'admin' | 'editor' | 'reader';
 export type TCustomContext = {
-	claims?: null | TCognitoClaims;
-	context: unknown;
 	dbConnection: Connection;
-	event: unknown;
-	functionName: string;
 	headers: string[];
+	userObj: Record<string, string>;
 };
 
 // ts-prune-ignore-next
@@ -91,16 +72,13 @@ const getApolloServerHandler = async (): Promise<TApolloServerHandler> => {
 		});
 
 		apolloServerHandler = new ApolloServer({
-			context: ({ context, event, req }): TCustomContext => {
-				const claims = event?.requestContext?.authorizer?.claims;
+			context: ({ req }): TCustomContext => {
+				const userObj = getUserFromContext(req);
 
 				return {
-					claims,
-					context,
 					dbConnection,
-					event,
-					functionName: context?.functionName,
 					headers: req.headers,
+					userObj,
 				};
 			},
 			introspection: true,
@@ -141,23 +119,42 @@ const getApolloServerHandler = async (): Promise<TApolloServerHandler> => {
 	return apolloServerHandler;
 };
 
-// ts-prune-ignore-next
-export default async (
-	req: VercelRequest,
-	res: VercelResponse,
-): Promise<void> => {
-	const transaction = Sentry.startTransaction({
-		op: 'GQL',
-		name: 'GraphQL request',
-	});
+const allowCors = (
+	fn: (req: VercelRequest, res: VercelResponse) => Promise<void>,
+) => async (req: VercelRequest, res: VercelResponse): Promise<void> => {
+	res.setHeader('Access-Control-Allow-Credentials', 'true');
+	res.setHeader('Access-Control-Allow-Origin', domain || '');
+	res.setHeader('Access-Control-Allow-Methods', 'OPTIONS,POST');
+	res.setHeader(
+		'Access-Control-Allow-Headers',
+		'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, authorization, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version',
+	);
 
-	try {
-		const apolloServerHandler = await getApolloServerHandler();
+	if (req.method === 'OPTIONS') {
+		res.status(200).end();
 
-		return apolloServerHandler(req, res);
-	} catch (e) {
-		Sentry.captureException(e);
-	} finally {
-		transaction.finish();
+		return;
 	}
+
+	return await fn(req, res);
 };
+
+// ts-prune-ignore-next
+export default allowCors(
+	async (req: VercelRequest, res: VercelResponse): Promise<void> => {
+		const transaction = Sentry.startTransaction({
+			op: 'GQL',
+			name: 'GraphQL request',
+		});
+
+		try {
+			const apolloServerHandler = await getApolloServerHandler();
+
+			return apolloServerHandler(req, res);
+		} catch (e) {
+			Sentry.captureException(e);
+		} finally {
+			transaction.finish();
+		}
+	},
+);

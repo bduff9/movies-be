@@ -13,6 +13,7 @@ import {
 } from 'type-graphql';
 import { getRepository } from 'typeorm';
 
+import { TUserType } from '../../api/graphql';
 import CaseType from '../entity/CaseType';
 import DateTypeScalar from '../entity/DateType';
 import DigitalType from '../entity/DigitalType';
@@ -235,7 +236,7 @@ class UpdateMovieItemInput implements Partial<MovieItem> {
 
 @Resolver(MovieItem)
 export class MovieItemResolver {
-	@Authorized('user')
+	@Authorized<TUserType>('reader')
 	@Query(() => Int)
 	async countMovieItems (@Args() filters: CountMovieItems): Promise<number> {
 		const movieItemRepository = getRepository(MovieItem);
@@ -246,7 +247,7 @@ export class MovieItemResolver {
 		});
 	}
 
-	@Authorized('user')
+	@Authorized<TUserType>('reader')
 	@Query(() => [MovieItem])
 	async movieItems (
 		@Args() { limit, skip, order: orderArr, ...filters }: GetMovieItemsArgs,
@@ -269,7 +270,7 @@ export class MovieItemResolver {
 		});
 	}
 
-	@Authorized('user')
+	@Authorized<TUserType>('reader')
 	@Query(() => MovieItem)
 	async movieItem (
 		@Arg('itemID', () => Int) itemID: number,
@@ -277,7 +278,7 @@ export class MovieItemResolver {
 		return await MovieItem.findOne({ itemID });
 	}
 
-	@Authorized('admin')
+	@Authorized<TUserType>('editor')
 	@Mutation(() => MovieItem)
 	async addMovieItem (
 		@Args()
@@ -290,7 +291,7 @@ export class MovieItemResolver {
 		return movieItem;
 	}
 
-	@Authorized('admin')
+	@Authorized<TUserType>('editor')
 	@Mutation(() => MovieItem)
 	async markMovieWatched (
 		@Arg('itemID', () => Int) itemID: number,
@@ -306,7 +307,7 @@ export class MovieItemResolver {
 		return movieItem;
 	}
 
-	@Authorized('admin')
+	@Authorized<TUserType>('editor')
 	@Mutation(() => MovieItem)
 	async updateMovieItem (
 		@Arg('itemID', () => Int) itemID: number,

@@ -10,6 +10,7 @@ import {
 	Resolver,
 } from 'type-graphql';
 
+import { TUserType } from '../../api/graphql';
 import { Movie } from '../entity/Movie';
 
 @ArgsType()
@@ -38,19 +39,19 @@ class UpdateMovieInput implements Partial<Movie> {
 
 @Resolver(Movie)
 export class MovieResolver {
-	@Authorized('user')
+	@Authorized<TUserType>('reader')
 	@Query(() => Int)
 	async countMovies (): Promise<number> {
 		return await Movie.count();
 	}
 
-	@Authorized('user')
+	@Authorized<TUserType>('reader')
 	@Query(() => [Movie])
 	async movies (@Arg('itemID', () => Int) itemID: number): Promise<Movie[]> {
 		return await Movie.find({ itemID });
 	}
 
-	@Authorized('admin')
+	@Authorized<TUserType>('editor')
 	@Mutation(() => Movie)
 	async addMovie (@Args() newMovie: AddMovieInput): Promise<Movie> {
 		const movie = Movie.create(newMovie);
@@ -60,7 +61,7 @@ export class MovieResolver {
 		return movie;
 	}
 
-	@Authorized('admin')
+	@Authorized<TUserType>('editor')
 	@Mutation(() => Movie)
 	async updateMovie (
 		@Arg('movieID', () => Int) movieID: number,

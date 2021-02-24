@@ -9,7 +9,6 @@
     "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
-    "jsx": "preserve",
     "lib": [
       "dom",
       "dom.iterable",
@@ -39,5 +38,5 @@
     "target": "ES2019"
   },
   "exclude": ["node_modules"],
-  "include": ["**/*.ts", "**/*.tsx", "ormconfig.js"]
+  "include": ["**/*.ts", "ormconfig.js"]
 }
