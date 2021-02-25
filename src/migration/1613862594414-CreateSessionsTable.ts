@@ -13,9 +13,9 @@ export class CreateSessionsTable1613862594414 implements MigrationInterface {
           updated_at    TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
           PRIMARY KEY (id),
           constraint uk_session_token
-            unique (session_token),
+            unique (session_token(250)),
           constraint uk_access_token
-            unique (access_token)
+            unique (access_token(250))
         )
         charset=utf8mb4`);
 	}

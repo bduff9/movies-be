@@ -13,7 +13,7 @@ export class CreateUsersTable1613862749596 implements MigrationInterface {
           updated_at     TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
           PRIMARY KEY (id),
           constraint uk_email
-            unique (email)
+            unique (email(250))
         )
         charset=utf8mb4`);
 	}

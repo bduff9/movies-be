@@ -13,7 +13,7 @@ export class CreateVerificationRequestsTable1613862949548
           updated_at TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
           PRIMARY KEY (id),
           constraint uk_token
-            unique (token)
+            unique (token(250))
         )
         charset=utf8mb4`);
 	}
