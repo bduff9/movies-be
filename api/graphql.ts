@@ -102,16 +102,22 @@ const getApolloServerHandler = async (): Promise<TApolloServerHandler> => {
 				methods: ['OPTIONS', 'POST'],
 				origin: domain,
 			},
-			onHealthCheck: async (req: VercelRequest): Promise<unknown> => {
-				//TODO: check if db is up
-				const database = 'UNKNOWN';
+			onHealthCheck: async (_req: VercelRequest): Promise<unknown> => {
+				try {
+					await dbConnection.query('SELECT CURRENT_TIMESTAMP');
 
-				console.log({ req });
+					return {
+						database: 'UP',
+						server: 'UP',
+					};
+				} catch (error) {
+					console.error('Error communicating with database', error);
 
-				return {
-					database,
-					server: 'UP',
-				};
+					return {
+						database: 'ERROR',
+						server: 'UP',
+					};
+				}
 			},
 		});
 	}
