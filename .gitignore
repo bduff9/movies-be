@@ -26,5 +26,7 @@ temp/
 ormconfig.json
 .serverless
 .webpack
-
 .vercel
+
+# DeepCode
+.dccache
