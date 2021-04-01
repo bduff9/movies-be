@@ -1,5 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
+// ts-prune-ignore-next
 export class CreateVerificationRequestsTable1613862949548
 	implements MigrationInterface {
 	public async up (queryRunner: QueryRunner): Promise<void> {
