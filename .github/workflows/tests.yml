@@ -26,6 +26,15 @@ jobs:
         uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Analyze the code
+        id: scc
+        uses: iryanbell/scc-docker-action@v1.0.0
+        with:
+          args: ${{ env.workspace }}
+      - uses: returntocorp/semgrep-action@v1
+        with:
+          publishToken: ${{ secrets.SEMGREP_APP_TOKEN }}
+          publishDeployment: 600
       - name: Set environment variables
         run: |
           case "${GITHUB_REF}" in
