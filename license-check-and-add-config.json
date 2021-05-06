@@ -1,0 +1,40 @@
+{
+  "ignore": [
+    "*.txt",
+    ".env",
+    ".env.example",
+    ".eslintignore",
+    ".gitignore",
+    ".eslintrc.js",
+    ".nowignore",
+    ".nvmrc",
+    ".ts-prunerc",
+    "LICENSE",
+    "README.md",
+    "**/*.graphql",
+    "*.json",
+    "*.yml",
+    ".gitignore",
+    ".husky/**",
+    ".github/**",
+    ".build/**",
+    ".vercel/**",
+    ".vscode/**"
+  ],
+  "license": "LICENSE-HEAD",
+  "licenseFormats": {
+    "js|ts|svelte|scss|css": {
+      "prepend": "/*******************************************************************************",
+      "append": " */",
+      "eachLine": {
+        "prepend": " * "
+      }
+    },
+    "dotfile|^Dockerfile": {
+      "eachLine": {
+        "prepend": "# "
+      }
+    }
+  },
+  "trailingWhitespace": "TRIM"
+}
