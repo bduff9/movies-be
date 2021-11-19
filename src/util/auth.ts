@@ -14,32 +14,24 @@
  * Home: https://asitewithnoname.com/
  */
 import { VercelRequest } from '@vercel/node';
-import { decode } from 'jwt-simple';
 import { AuthChecker } from 'type-graphql';
 
 import { TCustomContext, TUserType } from '../../api/graphql';
+import { User } from '../entity';
 
-const { JWT_SECRET } = process.env;
+export const getUserFromContext = async (req: VercelRequest): Promise<null | User> => {
+	const token = req.headers.authorization?.replace('Bearer ', '');
 
-export const getUserFromContext = (
-	req: VercelRequest,
-): Record<string, string> => {
-	let userObj = {};
+	if (!token) return null;
 
-	if (!JWT_SECRET) throw new Error('Missing JWT secret');
+	const user = await User.createQueryBuilder('U')
+		.innerJoin('U.sessions', 'S')
+		.where('S.access_token = :token', {
+			token,
+		})
+		.getOne();
 
-	try {
-		userObj = decode(
-			req.cookies['next-auth.session-token'],
-			JWT_SECRET,
-			false,
-			'HS256',
-		);
-	} catch (error) {
-		console.debug('Failed to decode JWT', error);
-	}
-
-	return userObj;
+	return user || null;
 };
 
 export const customAuthChecker: AuthChecker<TCustomContext, TUserType> = (
@@ -49,7 +41,7 @@ export const customAuthChecker: AuthChecker<TCustomContext, TUserType> = (
 	console.log('Context user obj: ', context.userObj);
 
 	if (roles.includes('admin') || roles.includes('editor')) {
-		return !!context.userObj.sub;
+		return !!context.userObj?.id;
 	}
 
 	return true;

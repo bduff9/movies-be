@@ -13,5 +13,9 @@
  * along with this program.  If not, see {http://www.gnu.org/licenses/}.
  * Home: https://asitewithnoname.com/
  */
+export * from './Account';
 export * from './Movie';
 export * from './MovieItem';
+export * from './Session';
+export * from './User';
+export * from './VerificationRequest';
