@@ -19,7 +19,6 @@ import {
 	Column,
 	CreateDateColumn,
 	Entity,
-	Index,
 	OneToMany,
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
@@ -27,7 +26,6 @@ import {
 
 import { Account, Session } from '.';
 
-@Index('uk_UserEmail', ['userEmail'], { unique: true })
 @Entity('users', { schema: 'media_tracker' })
 @ObjectType()
 export class User extends BaseEntity {
