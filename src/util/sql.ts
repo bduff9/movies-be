@@ -20,9 +20,7 @@ import FilterType from '../entity/FilterType';
 import { MovieItem } from '../entity/MovieItem';
 import { TFilterType, CountMovieItems } from '../resolver/MovieItemResolver';
 
-const getSQLFilter = <T>(
-	filter: TFilterType<T>,
-): T | FindOperator<T> | undefined => {
+const getSQLFilter = <T>(filter: TFilterType<T>): T | FindOperator<T> | undefined => {
 	const { relation, value } = filter;
 
 	switch (filter.relation) {

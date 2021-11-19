@@ -26,8 +26,7 @@ module.exports = {
 		'plugin:import/errors',
 		'plugin:import/typescript',
 		'plugin:import/warnings',
-		'plugin:prettierx/@typescript-eslint',
-		'plugin:prettierx/standardx',
+		'plugin:prettierx/standardize',
 		'plugin:you-dont-need-momentjs/recommended',
 	],
 	rules: {

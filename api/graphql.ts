@@ -23,22 +23,14 @@ import { buildSchema } from 'type-graphql';
 import { createConnection, Connection } from 'typeorm';
 
 import * as entities from '../src/entity';
+import { User } from '../src/entity';
 import * as resolvers from '../src/resolver';
 import { customAuthChecker, getUserFromContext } from '../src/util/auth';
 
-const {
-	database,
-	domain,
-	host,
-	password,
-	port,
-	username,
-	VERCEL_ENV,
-} = process.env;
+const { database, domain, host, password, port, username } = process.env;
 
 Sentry.init({
-	dsn:
-		'https://ecff7e6126c94ee68c5a043146de723f@o502207.ingest.sentry.io/5638503',
+	dsn: 'https://ecff7e6126c94ee68c5a043146de723f@o502207.ingest.sentry.io/5638503',
 	tracesSampleRate: 1.0,
 });
 
@@ -46,7 +38,7 @@ export type TUserType = 'admin' | 'editor' | 'reader';
 export type TCustomContext = {
 	dbConnection: Connection;
 	headers: string[];
-	userObj: Record<string, string>;
+	userObj: null | User;
 };
 
 // ts-prune-ignore-next
@@ -56,10 +48,7 @@ export const config = {
 	},
 };
 
-type TApolloServerHandler = (
-	req: VercelRequest,
-	res: VercelResponse,
-) => Promise<void>;
+type TApolloServerHandler = (req: VercelRequest, res: VercelResponse) => Promise<void>;
 
 let apolloServerHandler: TApolloServerHandler;
 
@@ -73,7 +62,7 @@ const getApolloServerHandler = async (): Promise<TApolloServerHandler> => {
 			password,
 			port: port !== undefined ? +port : port,
 			username,
-			synchronize: VERCEL_ENV === 'development',
+			synchronize: false,
 			logging: true,
 			entities: Object.values(entities),
 			migrations: [],
@@ -87,8 +76,8 @@ const getApolloServerHandler = async (): Promise<TApolloServerHandler> => {
 		});
 
 		apolloServerHandler = new ApolloServer({
-			context: ({ req }): TCustomContext => {
-				const userObj = getUserFromContext(req);
+			context: async ({ req }): Promise<TCustomContext> => {
+				const userObj = await getUserFromContext(req);
 
 				return {
 					dbConnection,
