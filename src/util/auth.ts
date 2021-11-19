@@ -25,13 +25,14 @@ export const getUserFromContext = async (req: VercelRequest): Promise<null | Use
 	if (!token) return null;
 
 	const user = await User.createQueryBuilder('U')
-		.innerJoin('U.sessions', 'S')
+		.innerJoin('sessions', 'S', 'U.id = S.user_id')
+		// .innerJoin('U.sessions', 'S')
 		.where('S.access_token = :token', {
 			token,
 		})
 		.getOne();
 
-	return user || null;
+	return user ?? null;
 };
 
 export const customAuthChecker: AuthChecker<TCustomContext, TUserType> = (

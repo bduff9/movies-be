@@ -53,10 +53,16 @@ export class User extends BaseEntity {
 	@Column('varchar', { name: 'image', nullable: true, length: 255 })
 	public image!: null | string;
 
-	@OneToMany(() => Session, session => session.userId)
+	@OneToMany(() => Session, session => session.userId, {
+		onDelete: 'CASCADE',
+		onUpdate: 'CASCADE',
+	})
 	sessions!: Array<Session>;
 
-	@OneToMany(() => Account, account => account.userId)
+	@OneToMany(() => Account, account => account.userId, {
+		onDelete: 'CASCADE',
+		onUpdate: 'CASCADE',
+	})
 	accounts!: Array<Account>;
 
 	@Field(() => Date, { nullable: false })

@@ -27,7 +27,7 @@ import { User } from '../src/entity';
 import * as resolvers from '../src/resolver';
 import { customAuthChecker, getUserFromContext } from '../src/util/auth';
 
-const { database, domain, host, password, port, username, VERCEL_ENV } = process.env;
+const { database, domain, host, password, port, username } = process.env;
 
 Sentry.init({
 	dsn: 'https://ecff7e6126c94ee68c5a043146de723f@o502207.ingest.sentry.io/5638503',
@@ -62,7 +62,7 @@ const getApolloServerHandler = async (): Promise<TApolloServerHandler> => {
 			password,
 			port: port !== undefined ? +port : port,
 			username,
-			synchronize: VERCEL_ENV === 'development',
+			synchronize: false,
 			logging: true,
 			entities: Object.values(entities),
 			migrations: [],

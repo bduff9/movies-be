@@ -55,7 +55,7 @@ export class Account extends BaseEntity {
 		onDelete: 'CASCADE',
 		onUpdate: 'CASCADE',
 	})
-	@JoinColumn({ name: 'user_id' })
+	@JoinColumn()
 	public user!: User;
 
 	@Field(() => String, { nullable: false })

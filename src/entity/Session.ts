@@ -42,7 +42,7 @@ export class Session extends BaseEntity {
 	public userId!: number;
 
 	@Field(() => User, { nullable: false })
-	@ManyToOne(() => User, user => user.sessions, {
+	@ManyToOne(() => User, {
 		onDelete: 'CASCADE',
 		onUpdate: 'CASCADE',
 	})
