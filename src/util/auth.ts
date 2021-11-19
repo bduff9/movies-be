@@ -46,6 +46,8 @@ export const customAuthChecker: AuthChecker<TCustomContext, TUserType> = (
 	{ context },
 	roles,
 ) => {
+	console.log('Context user obj: ', context.userObj);
+
 	if (roles.includes('admin') || roles.includes('editor')) {
 		return !!context.userObj.sub;
 	}
