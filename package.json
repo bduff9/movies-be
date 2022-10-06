@@ -39,7 +39,7 @@
   },
   "config": {},
   "dependencies": {
-    "@saeris/apollo-server-vercel": "0.4.0",
+    "@saeris/apollo-server-vercel": "1.0.0",
     "@sentry/node": "6.15.0",
     "@sentry/tracing": "6.15.0",
     "class-validator": "0.13.1",
