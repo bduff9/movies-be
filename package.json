@@ -47,7 +47,7 @@
     "mysql2": "2.3.3",
     "reflect-metadata": "0.1.13",
     "type-graphql": "1.1.1",
-    "typeorm": "0.2.41"
+    "typeorm": "0.3.14"
   },
   "devDependencies": {
     "@types/eslint": "8.2.0",
